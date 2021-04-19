@@ -1,0 +1,35 @@
+[app]
+RunMode = "debug"
+PageSize = 20
+JwtSecret = "0102$%#link&*^site*&150405"
+UploadTmpDir = "static/upload"
+ImgSavePath = "runtime/uploads"
+ImgUrlPath = "/upload/images"
+
+[server]
+HTTPPort = 8000
+ReadTimeout = 60
+WriteTimeout = 60
+
+[db]
+DBType = "mysql"
+DBUser = "root"
+DBPwd = "123456"
+DBHost = "127.0.0.1:3306"
+DBName = "base-system"
+
+[redis]
+RedisAddr = "127.0.0.1:6379"
+RedisPWD = ""
+RedisDB = ""
+
+[zaplog]
+level = 'info'
+format = 'console'
+prefix = '[base-system-log]'
+director = 'runtime/log'
+link-name = 'latest_log'
+show-line = true
+encode-level = 'LowercaseColorLevelEncoder'
+stacktrace-key = 'stacktrace'
+log-in-console = true
