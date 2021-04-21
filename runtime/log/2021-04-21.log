@@ -29,3 +29,6 @@
 [base-system-log] 2021/04/21 - 14:33:22.948	info	redis connect ping response:	{"pong": "PONG"}
 [base-system-log] 2021/04/21 - 14:42:05.441	info	redis connect ping response:	{"pong": "PONG"}
 [base-system-log] 2021/04/21 - 15:33:37.381	info	redis connect ping response:	{"pong": "PONG"}
+[base-system-log] 2021/04/21 - 16:50:28.203	info	redis connect ping response:	{"pong": "PONG"}
+[base-system-log] 2021/04/21 - 16:50:28.232	error	listen tcp :8000: bind: Only one usage of each socket address (protocol/network address/port) is normally permitted.
+[base-system-log] 2021/04/21 - 16:50:52.618	info	redis connect ping response:	{"pong": "PONG"}

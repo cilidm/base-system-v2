@@ -1,9 +1,9 @@
 package controller
 
 import (
+	"bytes"
 	"github.com/cilidm/base-system-v2/app/api/request"
 	"github.com/cilidm/base-system-v2/app/api/response"
-	"github.com/cilidm/base-system-v2/app/global"
 	"github.com/cilidm/base-system-v2/app/model"
 	"github.com/cilidm/base-system-v2/app/model/dao"
 	"github.com/cilidm/base-system-v2/app/service"
@@ -11,10 +11,10 @@ import (
 	"github.com/cilidm/toolbox/gconv"
 	"github.com/cilidm/toolbox/ip"
 	pkg "github.com/cilidm/toolbox/str"
+	"github.com/dchest/captcha"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/mojocn/base64Captcha"
 	"github.com/mssola/user_agent"
-	"go.uber.org/zap"
 	"net/http"
 	"time"
 )
@@ -91,30 +91,57 @@ func NotFound(c *gin.Context) {
 	c.HTML(http.StatusOK, "not_found.html", gin.H{})
 }
 
-
 type CaptchaResponse struct {
 	CaptchaId string `json:"captchaId"`
 	PicPath   string `json:"picPath"`
 }
 
-var store = base64Captcha.DefaultMemStore
-
-// @Tags Base
-// @Summary 生成验证码
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"验证码获取成功"}"
-// @Router /base/captcha [post]
 func Captcha(c *gin.Context) {
-	//字符,公式,验证码配置
-	// 生成默认数字的driver
-	driver := base64Captcha.NewDriverDigit(e.ImgHeight, e.ImgWidth, e.ImgKeyLength, 0.7, 80)
-	cp := base64Captcha.NewCaptcha(driver, store)
-	if id, b64s, err := cp.Generate(); err != nil {
-		global.ZapLog.Error("验证码获取失败!", zap.Any("err", err))
-		response.ErrorResp(c).SetMsg("验证码获取失败")
+	l := captcha.DefaultLen
+	w, h := e.ImgWidth, e.ImgHeight
+	captchaId := captcha.NewLen(l)
+	session := sessions.Default(c)
+	session.Set("captcha", captchaId)
+	_ = session.Save()
+	_ = Serve(c.Writer, c.Request, captchaId, ".png", "zh", false, w, h)
+}
+
+func Serve(w http.ResponseWriter, r *http.Request, id, ext, lang string, download bool, width, height int) error {
+	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	w.Header().Set("Pragma", "no-cache")
+	w.Header().Set("Expires", "0")
+
+	var content bytes.Buffer
+	switch ext {
+	case ".png":
+		w.Header().Set("Content-Type", "image/png")
+		_ = captcha.WriteImage(&content, id, width, height)
+	case ".wav":
+		w.Header().Set("Content-Type", "audio/x-wav")
+		_ = captcha.WriteAudio(&content, id, lang)
+	default:
+		return captcha.ErrNotFound
+	}
+
+	if download {
+		w.Header().Set("Content-Type", "application/octet-stream")
+	}
+	http.ServeContent(w, r, id+ext, time.Time{}, bytes.NewReader(content.Bytes()))
+	return nil
+}
+
+func CaptchaVerify(c *gin.Context) {
+	code := c.PostForm("code")
+	session := sessions.Default(c)
+	if captchaId := session.Get("captcha"); captchaId != nil {
+		session.Delete("captcha")
+		_ = session.Save()
+		if captcha.VerifyString(captchaId.(string), code) {
+			response.SuccessResp(c).WriteJsonExit()
+		} else {
+			response.ErrorResp(c).WriteJsonExit()
+		}
 	} else {
-		response.SuccessResp(c).SetMsg("验证码获取成功").SetData(CaptchaResponse{CaptchaId: id,PicPath: b64s})
+		response.ErrorResp(c).WriteJsonExit()
 	}
 }

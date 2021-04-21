@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394 // indirect
 	github.com/cilidm/toolbox v0.0.0-20210325100214-bf39edeb5016
+	github.com/dchest/captcha v0.0.0-20200903113550-03f5f0333e1f
 	github.com/gchaincl/dotsql v1.0.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/sessions v0.0.3
@@ -15,7 +16,6 @@ require (
 	github.com/jinzhu/gorm v1.9.16
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.4 // indirect
-	github.com/mojocn/base64Captcha v1.3.4
 	github.com/mssola/user_agent v0.5.2
 	github.com/onsi/ginkgo v1.16.1 // indirect
 	github.com/onsi/gomega v1.11.0 // indirect

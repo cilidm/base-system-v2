@@ -14,4 +14,5 @@ func init() {
 	r.POST("isLogin", nil)
 	r.GET("not_found", NotFound)
 	r.GET("captcha", Captcha)
+	r.POST("captcha_verify", CaptchaVerify)
 }

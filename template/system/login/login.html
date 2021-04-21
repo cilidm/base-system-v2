@@ -40,10 +40,10 @@
 		<script src="/static/component/layui/layui.js"></script>
 		<script src="/static/component/pear/pear.js"></script>
 		<script>
-			layui.use(['form', 'button', 'popup'], function() {
+			layui.use(['form','jquery','layer','button','popup'], function() {
 				var form = layui.form;
 				var button = layui.button;
-				var popup = layui.popup;
+				var popup = layui.popup,$ = layui.jquery,layer = layui.layer;
 				
                 // 登 录 提 交
 				form.on('submit(login)', function(data) {
@@ -68,16 +68,16 @@
 								}
 							})
 						}
-					});
+					});	x
 					return false;
 				});
+				$("#captchaImage").click(function(){
+					document.getElementById("captchaImage").src=  "/captcha?" + Math.random();
+				})
+				setInterval(function(){
+					document.getElementById("captchaImage").src=  "/captcha?" + Math.random();
+				},30 * 1000);
 			})
-			$("#captchaImage").click(function(){
-				document.getElementById("captchaImage").src=  "/captcha?" + Math.random();
-			})
-			setInterval(function(){
-				document.getElementById("captchaImage").src=  "/captcha?" + Math.random();
-			},30 * 1000);
 		</script>
 	</body>
 </html>
