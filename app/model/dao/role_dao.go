@@ -1,9 +1,10 @@
 package dao
 
 import (
+	"github.com/cilidm/base-system-v2/app/global"
+	"github.com/cilidm/base-system-v2/app/model"
 	"github.com/cilidm/toolbox/gconv"
-	"oss_manage/app/system/db"
-	"oss_manage/app/system/model"
+
 	"strings"
 )
 

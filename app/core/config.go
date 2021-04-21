@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"github.com/spf13/viper"
 	"log"
 	"sync"
@@ -13,16 +14,9 @@ var (
 
 type conf struct {
 	DB     DBConf
-	Server Server
 	Redis  RedisConf
 	App    SettingConf
 	Zaplog ZapLogConf
-}
-
-type Server struct {
-	HTTPPort     int
-	ReadTimeout  int
-	WriteTimeout int
 }
 
 type DBConf struct {
@@ -31,7 +25,6 @@ type DBConf struct {
 	DBPwd  string
 	DBHost string
 	DBName string
-	//DBPath string
 }
 
 type RedisConf struct {
@@ -41,10 +34,10 @@ type RedisConf struct {
 }
 
 type SettingConf struct {
+	HttpPort     int `json:"http-port"`
+	ReadTimeout  int `json:"read-timeout"`
+	WriteTimeout int `json:"write-timeout"`
 	RunMode      string
-	HTTPPort     int
-	ReadTimeout  int
-	WriteTimeout int
 	PageSize     int
 	JwtSecret    string
 	UploadTmpDir string
@@ -73,5 +66,6 @@ func InitConfig(tomlPath string) {
 			log.Fatal("read config failed: %v", err)
 		}
 		v.Unmarshal(&Conf)
+		fmt.Println(Conf)
 	})
 }

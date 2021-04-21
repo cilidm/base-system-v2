@@ -5,9 +5,7 @@ JwtSecret = "0102$%#link&*^site*&150405"
 UploadTmpDir = "static/upload"
 ImgSavePath = "runtime/uploads"
 ImgUrlPath = "/upload/images"
-
-[server]
-HTTPPort = 8000
+HttpPort = 8000
 ReadTimeout = 60
 WriteTimeout = 60
 
