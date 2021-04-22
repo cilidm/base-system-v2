@@ -42,11 +42,9 @@ func CaptMake() (id, b64s string, err error) {
 func CaptVerify(id string, capt string) bool {
 	fmt.Println("id:" + id)
 	fmt.Println("capt:" + capt)
-	//if store.Verify(id, capt, true) {
 	if store.Verify(id, capt, false) {
 		return true
 	} else {
 		return false
 	}
-	//return
 }

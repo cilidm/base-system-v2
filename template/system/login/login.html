@@ -18,10 +18,10 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<input placeholder="账 户 : admin " lay-verify="required" hover class="layui-input"  />
+				<input placeholder="账 户 : admin " name="username" lay-verify="required" hover class="layui-input"  />
 			</div>
 			<div class="layui-form-item">
-				<input placeholder="密 码 : admin " lay-verify="required" hover class="layui-input"  />
+				<input placeholder="密 码 : 123456 " type="password" name="password" lay-verify="required" hover class="layui-input"  />
 			</div>
 			<div class="layui-form-item">
 				<input placeholder="验证码 : " name="captcha" id="captvalue" hover class="code layui-input layui-input-inline"  />
@@ -82,19 +82,27 @@
 									data:data.field,
 									type:"post",
 									dataType:'json',
-									success:function(result){
+									success:function(res){
 										layer.close(loader);
-										btn.stop(function(){
-											if(result.success){
-												popup.success(result.msg,function(){
-													location.href = "/index";
-												})
-											}else{
-												popup.failure(result.msg,function(){
-													document.getElementById("captchaImage").src=captchaPath + "?" + Math.random();
+										btn.stop();
+										if (res.code == 200){
+											popup.success(result.msg,function(){
+												location.href = "/system/index";
+											},2000)
+										}else{
+											popup.failure(result.msg,function(){
+												$.ajax({
+													type: "GET",
+													url: "/captcha?" + Math.random(),
+													data: {},
+													dataType: "JSON",
+													success: function(result) {
+														curCaptId = result.data.captchaId;
+														document.getElementById("captchaImage").src=result.data.picPath;
+													}
 												});
-											}
-										})
+											});
+										}
 									}
 								});
 							} else {
@@ -119,18 +127,18 @@
 						}
 					});
 				})
-				// setInterval(function(){
-				// 	$.ajax({
-				// 		type: "GET",
-				// 		url: "/captcha?" + Math.random(),
-				// 		data: {},
-				// 		dataType: "JSON",
-				// 		success: function(result) {
-				// 			curCaptId = result.data.captchaId;
-				// 			document.getElementById("captchaImage").src=result.data.picPath;
-				// 		}
-				// 	});
-				// },180 * 1000);
+				setInterval(function(){
+					$.ajax({
+						type: "GET",
+						url: "/captcha?" + Math.random(),
+						data: {},
+						dataType: "JSON",
+						success: function(result) {
+							curCaptId = result.data.captchaId;
+							document.getElementById("captchaImage").src=result.data.picPath;
+						}
+					});
+				},180 * 1000);
 			})
 		</script>
 	</body>
