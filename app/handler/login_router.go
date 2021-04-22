@@ -13,6 +13,6 @@ func init() {
 	r.GET("logout", Logout)
 	r.POST("isLogin", nil)
 	r.GET("not_found", NotFound)
-	r.GET("captcha", Captcha)
+	r.GET("captcha", GetCaptcha)
 	r.POST("captcha_verify", CaptchaVerify)
 }

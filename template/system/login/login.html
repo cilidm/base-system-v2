@@ -24,8 +24,8 @@
 				<input placeholder="密 码 : admin " lay-verify="required" hover class="layui-input"  />
 			</div>
 			<div class="layui-form-item">
-				<input placeholder="验证码 : " name="captcha" hover class="code layui-input layui-input-inline"  />
-				<img src="/captcha" class="codeImage" id="captchaImage"/>
+				<input placeholder="验证码 : " name="captcha" id="captvalue" hover class="code layui-input layui-input-inline"  />
+				<img src="" class="codeImage" id="captchaImage"/>
 			</div>
 			<div class="layui-form-item">
 				<input type="checkbox" name="" title="记住密码" lay-skin="primary" checked>
@@ -43,40 +43,94 @@
 			layui.use(['form','jquery','layer','button','popup'], function() {
 				var form = layui.form;
 				var button = layui.button;
-				var popup = layui.popup,$ = layui.jquery,layer = layui.layer;
-				
+				var popup = layui.popup,
+						$ = layui.jquery,
+						layer = layui.layer;
+
+				var curCaptId = "";
+				//得到图形验证码和id
+				$.ajax({
+					type: "GET",
+					url: "/captcha?" + Math.random(),
+					data: {},
+					dataType: "JSON",
+					success: function(result) {
+						curCaptId = result.data.captchaId;
+						document.getElementById("captchaImage").src=result.data.picPath;
+					}
+				});
+
                 // 登 录 提 交
 				form.on('submit(login)', function(data) {
 					let loader = layer.load();
 					let btn = button.load({elem: '.login'});
+
+					var capt = document.getElementById("captvalue").value;
+					var postdata = {
+						"id":curCaptId,
+						"capt":capt
+					};
 					$.ajax({
-						url:'/login',
-						data:data.field,
-						type:"post",
-						dataType:'json',
-						success:function(result){
-							layer.close(loader);
-							btn.stop(function(){
-								if(result.success){
-									popup.success(result.msg,function(){
-										location.href = "/index";
-									})
-								}else{
-									popup.failure(result.msg,function(){
-										document.getElementById("captchaImage").src=captchaPath + "?" + Math.random();
-									});
-								}
-							})
+						type: "POST",
+						url: "/captcha_verify",
+						data: postdata,
+						dataType: "JSON",
+						success: function(result) {
+							if (result.code == 200){
+								$.ajax({
+									url:'/login',
+									data:data.field,
+									type:"post",
+									dataType:'json',
+									success:function(result){
+										layer.close(loader);
+										btn.stop(function(){
+											if(result.success){
+												popup.success(result.msg,function(){
+													location.href = "/index";
+												})
+											}else{
+												popup.failure(result.msg,function(){
+													document.getElementById("captchaImage").src=captchaPath + "?" + Math.random();
+												});
+											}
+										})
+									}
+								});
+							} else {
+								layer.close(loader);
+								btn.stop();
+								layer.msg("验证错误:"+result.msg);
+								return false;
+							}
 						}
-					});	x
-					return false;
+					});
 				});
+
 				$("#captchaImage").click(function(){
-					document.getElementById("captchaImage").src=  "/captcha?" + Math.random();
+					$.ajax({
+						type: "GET",
+						url: "/captcha?" + Math.random(),
+						data: {},
+						dataType: "JSON",
+						success: function(result) {
+							curCaptId = result.data.captchaId;
+							document.getElementById("captchaImage").src=result.data.picPath;
+						}
+					});
 				})
-				setInterval(function(){
-					document.getElementById("captchaImage").src=  "/captcha?" + Math.random();
-				},30 * 1000);
+				// setInterval(function(){
+				// 	$.ajax({
+				// 		type: "GET",
+				// 		url: "/captcha?" + Math.random(),
+				// 		data: {},
+				// 		dataType: "JSON",
+				// 		success: function(result) {
+				// 			curCaptId = result.data.captchaId;
+				// 			document.getElementById("captchaImage").src=result.data.picPath;
+				// 		}
+				// 	});
+				// },180 * 1000);
 			})
 		</script>
 	</body>

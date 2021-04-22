@@ -58,5 +58,5 @@ const (
 
 	ImgHeight    = 80
 	ImgWidth     = 240
-	ImgKeyLength = 6
+	ImgKeyLength = 4
 )

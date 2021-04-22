@@ -17,3 +17,8 @@
 .idea
 
 test
+
+go.sum
+
+tmp
+runtime
